@@ -1,0 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background-image: url('./Assets/Campo.jpg'); 
+    background-size: cover; /* Cobre toda a tela */
+    background-position: center; 
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Mantém a imagem fixa ao rolar */
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Define altura total da viewport */
+    overflow: hidden; /* Remove rolagem para evitar cortes */
+}
+
+h1 {
+    margin-top: 20px;
+    text-align: center;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 87vh;
+    z-index: -1;
+}
+
+.controls {
+    display:inline-flex;
+    flex-direction: row; /* Alinha os controles em uma linha */
+    justify-content: space-around; /* Distribui os elementos horizontalmente */
+    width: 100%;
+    padding: 10px; /* Espaço ao redor dos controles */
+    gap: 20px;
+}
+
+label {
+    display: flex;
+    flex-direction: row; /* Organiza texto e slider na vertical */
+    align-items: center; /* Centraliza o texto e o controle */
+    font-size: 14px;
+}
+
+label span {
+    display: block;
+    margin-bottom: 5px; /* Espaço entre o texto e o slider */
+}
