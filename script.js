@@ -44,21 +44,22 @@ function ajustarEscala() {
     yPosicaoBase = yPosicaoBaseOriginal * (canvas.height / baseHeight);
 }
 
-window.addEventListener('resize', () => {
-    ajustarCanvas();
-    ajustarEscala();
-    desenharCenaInicial();
-});
-
 // Função para ajustar o tamanho do canvas
 function ajustarCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
+// Ajuste inicial
 ajustarCanvas();
 ajustarEscala();
 
+// Evento de redimensionamento
+window.addEventListener('resize', () => {
+    ajustarCanvas();
+    ajustarEscala();
+    desenharCenaInicial();
+});
 
 // Elementos de controle
 const estadioSelect = document.getElementById('estadioSelect');
@@ -96,30 +97,34 @@ function desenharCenaInicial() {
     // Desenha o fundo escalado
     ctx.drawImage(fundoImg, 0, 0, canvas.width, canvas.height);
 
-    const posXInicial = parseFloat(posicaoXInput.value) * escala;
+    const posicaoInicialEmMetros = parseFloat(posicaoXInput.value);
+    const posXInicialCanvas = posicaoInicialEmMetros * escala;
+
     const yBasePersonagem = canvas.height - yPosicaoBase - alturaPersonagem;
     const yBaseBola = canvas.height - yPosicaoBase - alturaBola;
 
     // Desenha o personagem
-    ctx.drawImage(personagemImg, posXInicial, yBasePersonagem, larguraPersonagem, alturaPersonagem);
+    ctx.drawImage(personagemImg, posXInicialCanvas, yBasePersonagem, larguraPersonagem, alturaPersonagem);
 
     // Desenha a bola ao lado do personagem
-    ctx.drawImage(bolaImg, posXInicial + larguraPersonagem - larguraBola / 2, yBaseBola, larguraBola, alturaBola);
+    ctx.drawImage(bolaImg, posXInicialCanvas + larguraPersonagem - larguraBola / 2, yBaseBola, larguraBola, alturaBola);
 
     // Desenha todas as trajetórias passadas
     trajetoriasPassadas.forEach(({ trajetoria, cor, posicaoInicial }) => {
+        const posXInicialCanvasTrajetoria = posicaoInicial * escala; // Converter para canvas
+
         ctx.beginPath();
         ctx.strokeStyle = cor;
         ctx.lineWidth = 2;
-        ctx.moveTo(trajetoria[0].x * escala + posicaoInicial, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
+        ctx.moveTo(trajetoria[0].x * escala + posXInicialCanvasTrajetoria, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
         trajetoria.forEach(point => {
-            ctx.lineTo(point.x * escala + posicaoInicial, canvas.height - yPosicaoBase - point.y * escala - alturaBola / 2);
+            ctx.lineTo(point.x * escala + posXInicialCanvasTrajetoria, canvas.height - yPosicaoBase - point.y * escala - alturaBola / 2);
         });
         ctx.stroke();
 
         // Desenha a bola no final de cada trajetória
         const { x, y } = trajetoria[trajetoria.length - 1];
-        ctx.drawImage(bolaImg, x * escala + posicaoInicial - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
+        ctx.drawImage(bolaImg, x * escala + posXInicialCanvasTrajetoria - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
     });
 
     // Desenha a linha de direção
@@ -131,11 +136,11 @@ function desenharCenaInicial() {
     
     const t = 0.1;
     
-    const posXFinal = posXInicial + larguraPersonagem + velX * t * escala;
+    const posXFinal = posXInicialCanvas + larguraPersonagem + velX * t * escala;
     const posYFinal = (yBaseBola + alturaBola / 2) - (velY * t - 0.5 * g * t * t) * escala;
     
     ctx.beginPath();
-    ctx.moveTo(posXInicial + larguraPersonagem, yBaseBola + alturaBola / 2);
+    ctx.moveTo(posXInicialCanvas + larguraPersonagem, yBaseBola + alturaBola / 2);
     ctx.lineTo(posXFinal, posYFinal);
     ctx.strokeStyle = 'red';
     ctx.lineWidth = 2;
@@ -183,7 +188,8 @@ function calcularTrajetoria() {
 // Função para animar a bola ao longo da trajetória
 function animarBola(trajetoria) {
     let index = 0;
-    const posXInicial = parseFloat(posicaoXInput.value) * escala;
+    const posicaoInicialEmMetros = parseFloat(posicaoXInput.value);
+    const posXInicialCanvas = posicaoInicialEmMetros * escala;
     const corTrajetoria = escolherCorAleatoria();
     let distanciaFinal = 0;
 
@@ -195,21 +201,21 @@ function animarBola(trajetoria) {
             ctx.beginPath();
             ctx.strokeStyle = corTrajetoria;
             ctx.lineWidth = 2;
-            ctx.moveTo(trajetoria[0].x * escala + posXInicial, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
+            ctx.moveTo(trajetoria[0].x * escala + posXInicialCanvas, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
             for (let i = 1; i <= index; i++) {
-                ctx.lineTo(trajetoria[i].x * escala + posXInicial, canvas.height - yPosicaoBase - trajetoria[i].y * escala - alturaBola / 2);
+                ctx.lineTo(trajetoria[i].x * escala + posXInicialCanvas, canvas.height - yPosicaoBase - trajetoria[i].y * escala - alturaBola / 2);
             }
             ctx.stroke();
 
             // Pega a posição da bola na trajetória
             const { x, y } = trajetoria[index];
-            ctx.drawImage(bolaImg, x * escala + posXInicial - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
+            ctx.drawImage(bolaImg, x * escala + posXInicialCanvas - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
             distanciaFinal = x;
 
             index++;
             requestAnimationFrame(frame);
         } else {
-            trajetoriasPassadas.push({ trajetoria, cor: corTrajetoria, posicaoInicial: posXInicial });
+            trajetoriasPassadas.push({ trajetoria, cor: corTrajetoria, posicaoInicial: posicaoInicialEmMetros });
             distanciaDisplay.textContent = (distanciaFinal - larguraPersonagem / escala).toFixed(2);
         }
     }
