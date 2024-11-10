@@ -2,7 +2,7 @@ const canvas = document.getElementById('trajetoriaCanvas');
 const ctx = canvas.getContext('2d');
 
 const g = 9.8; // Gravidade em m/s²
-const airDensity = 1.293; // Densidade do ar em kg/m³
+
 
 const personagemImg = new Image();
 personagemImg.src = './Assets/Personagem.png';
@@ -26,6 +26,7 @@ let trajetoriasPassadas = [];
 const cores = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#FFAF33', '#9D33FF', '#33FFF3', '#FF3333', '#33FF92', '#FF8333'];
 
 // Elementos de controle
+const estadioSelect = document.getElementById('estadioSelect');
 const velocidadeInput = document.getElementById('velocidade');
 const anguloInput = document.getElementById('angulo');
 const posicaoXInput = document.getElementById('posicaoX');
@@ -34,6 +35,9 @@ const velocidadeLabel = document.getElementById('velocidadeLabel');
 const anguloLabel = document.getElementById('anguloLabel');
 const posicaoXLabel = document.getElementById('posicaoXLabel');
 const distanciaDisplay = document.getElementById('distancia');
+
+
+let densidadeDoAr = parseFloat(estadioSelect.value); // Densidade do ar em kg/m³
 
 // Função para escolher uma cor aleatória para a trajetória
 function escolherCorAleatoria() {
@@ -44,7 +48,6 @@ function escolherCorAleatoria() {
 function atualizarLabels() {
     velocidadeLabel.textContent = velocidadeInput.value;
     anguloLabel.textContent = anguloInput.value;
-    posicaoXLabel.textContent = posicaoXInput.value;
 }
 
 function ajustarCanvas() {
@@ -110,8 +113,8 @@ function calcularTrajetoria() {
 
     let vInicial = parseFloat(velocidadeInput.value);
     let angulo = parseFloat(anguloInput.value) * Math.PI / 180;
-    let massa = 1;
-    let diametro = 1;
+    let massa = 0.45;
+    let diametro = 0.22;
     let coefArrasto = 0.47;
     let area = Math.PI * Math.pow(diametro / 2, 2);
 
@@ -124,7 +127,7 @@ function calcularTrajetoria() {
 
     while (posY >= 0) {
         let velocidade = Math.sqrt(velX ** 2 + velY ** 2);
-        let forcaArrasto = 0.5 * airDensity * area * coefArrasto * (velocidade ** 2);
+        let forcaArrasto = 0.5 * densidadeDoAr * area * coefArrasto * (velocidade ** 2);
 
         let ax = -forcaArrasto * (velX / velocidade) / massa;
         let ay = -g - (forcaArrasto * (velY / velocidade) / massa);
@@ -188,13 +191,12 @@ iniciarBtn.addEventListener('click', () => {
 });
 
 // Botão para limpar todas as trajetórias
-const limparBtn = document.createElement('button');
-limparBtn.textContent = 'Limpar Trajetórias';
-limparBtn.onclick = () => {
+const limparBtn = document.getElementById('limpar')
+limparBtn.addEventListener('click', () => {
     trajetoriasPassadas = [];
     desenharCenaInicial();
-};
-document.body.appendChild(limparBtn);
+});
+
 
 // Atualiza as labels quando os sliders mudam
 velocidadeInput.addEventListener('input', () => {
@@ -208,6 +210,12 @@ anguloInput.addEventListener('input', () => {
 });
 posicaoXInput.addEventListener('input', () => {
     atualizarLabels();
+    desenharCenaInicial();
+});
+estadioSelect.addEventListener('change', (event) => {
+    densidadeDoAr = parseFloat(event.target.value);
+    console.log(`Densidade do ar atualizada para: ${densidadeDoAr} kg/m³`);
+    
     desenharCenaInicial();
 });
 
