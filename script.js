@@ -3,27 +3,61 @@ const ctx = canvas.getContext('2d');
 
 const g = 9.8; // Gravidade em m/s²
 
-
 const personagemImg = new Image();
 personagemImg.src = './Assets/Personagem.png';
 
 const bolaImg = new Image();
 bolaImg.src = './Assets/Bola.png';
 
-// Dimensões do personagem e da bola
-const larguraPersonagem = 89;
-const alturaPersonagem = 117;
-const larguraBola = 27;
-const alturaBola = 27;
+// Original dimensions of the character and ball
+const larguraPersonagemOriginal = 89;
+const alturaPersonagemOriginal = 117;
+const larguraBolaOriginal = 27;
+const alturaBolaOriginal = 27;
 
-// Escala para converter metros para pixels
-const escala = 38;
+// Scaling factor to adjust sizes based on screen width
+let escala = 38; // Base scale (adjust as needed)
+let larguraPersonagem = larguraPersonagemOriginal;
+let alturaPersonagem = alturaPersonagemOriginal;
+let larguraBola = larguraBolaOriginal;
+let alturaBola = alturaBolaOriginal;
 
-// Lista de trajetórias e cores para cada simulação anterior
-let trajetoriasPassadas = [];
+// Function to adjust scaling based on window size
+function ajustarEscala() {
+    const baseWidth = 1920; // Base screen width
+    escala = (window.innerWidth / baseWidth) * 38; // Adjust escala proportionally
 
-// Cores disponíveis para trajetórias
-const cores = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#FFAF33', '#9D33FF', '#33FFF3', '#FF3333', '#33FF92', '#FF8333'];
+    // Adjust the character and ball sizes
+    const scaleFactor = escala / 38;
+    larguraPersonagem = larguraPersonagemOriginal * scaleFactor;
+    alturaPersonagem = alturaPersonagemOriginal * scaleFactor;
+    larguraBola = larguraBolaOriginal * scaleFactor;
+    alturaBola = alturaBolaOriginal * scaleFactor;
+}
+
+// Call this function when the window is resized
+window.addEventListener('resize', () => {
+    ajustarEscala();
+    ajustarCanvas();
+    desenharCenaInicial();
+    ajustarPosicaoXSlider();
+});
+
+// Function to adjust the canvas size
+function ajustarCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+// // Function to adjust the maximum value of the Position X slider
+// function ajustarPosicaoXSlider() {
+//     const maxPosX = (canvas.width - larguraPersonagem) / escala;
+//     posicaoXInput.max = Math.floor(maxPosX);
+// }
+
+// Adjust escala and canvas size initially
+ajustarEscala();
+ajustarCanvas();
 
 // Elementos de controle
 const estadioSelect = document.getElementById('estadioSelect');
@@ -36,8 +70,13 @@ const anguloLabel = document.getElementById('anguloLabel');
 const posicaoXLabel = document.getElementById('posicaoXLabel');
 const distanciaDisplay = document.getElementById('distancia');
 
-
 let densidadeDoAr = parseFloat(estadioSelect.value); // Densidade do ar em kg/m³
+
+// Lista de trajetórias e cores para cada simulação anterior
+let trajetoriasPassadas = [];
+
+// Cores disponíveis para trajetórias
+const cores = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#FFAF33', '#9D33FF', '#33FFF3', '#FF3333', '#33FF92', '#FF8333'];
 
 // Função para escolher uma cor aleatória para a trajetória
 function escolherCorAleatoria() {
@@ -48,17 +87,9 @@ function escolherCorAleatoria() {
 function atualizarLabels() {
     velocidadeLabel.textContent = velocidadeInput.value;
     anguloLabel.textContent = anguloInput.value;
+    posicaoXLabel.textContent = posicaoXInput.value;
 }
 
-function ajustarCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-
-// Ajusta o canvas no carregamento da página
-ajustarCanvas();
-
-// Função para desenhar o personagem, bola e trajetórias anteriores
 function desenharCenaInicial() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
     const posXInicial = parseFloat(posicaoXInput.value) * escala;
@@ -191,12 +222,12 @@ iniciarBtn.addEventListener('click', () => {
 });
 
 // Botão para limpar todas as trajetórias
-const limparBtn = document.getElementById('limpar')
+const limparBtn = document.getElementById('limpar');
 limparBtn.addEventListener('click', () => {
     trajetoriasPassadas = [];
     desenharCenaInicial();
+    distanciaDisplay.textContent = '0';
 });
-
 
 // Atualiza as labels quando os sliders mudam
 velocidadeInput.addEventListener('input', () => {
@@ -208,19 +239,35 @@ anguloInput.addEventListener('input', () => {
     atualizarLabels();
     desenharCenaInicial();
 });
+
 posicaoXInput.addEventListener('input', () => {
     atualizarLabels();
     desenharCenaInicial();
 });
+
 estadioSelect.addEventListener('change', (event) => {
     densidadeDoAr = parseFloat(event.target.value);
     console.log(`Densidade do ar atualizada para: ${densidadeDoAr} kg/m³`);
-    
     desenharCenaInicial();
 });
 
-// Desenha o personagem e a bola na posição inicial ao carregar a página
-personagemImg.onload = bolaImg.onload = desenharCenaInicial;
+// Draw the scene once both images are loaded
+let imagesLoaded = 0;
+personagemImg.onload = () => {
+    imagesLoaded++;
+    if (imagesLoaded === 2) {
+        desenharCenaInicial();
+        ajustarPosicaoXSlider();
+    }
+};
+bolaImg.onload = () => {
+    imagesLoaded++;
+    if (imagesLoaded === 2) {
+        desenharCenaInicial();
+        ajustarPosicaoXSlider();
+    }
+};
 
 // Configura valores iniciais
 atualizarLabels();
+ajustarPosicaoXSlider();

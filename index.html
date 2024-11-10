@@ -16,32 +16,30 @@
                 <option value="1.223">Vila Belmiro (1.223 kg/m³) - Altitude: 15m</option>
                 <option value="1.221">Maracanã (1.221 kg/m³) - Altitude: 30m</option>
                 <option value="1.145">Santiago Bernabéu (1.145 kg/m³) - Altitude: 700m</option>
-                <option value="1.138"selected >Morumbi (1.138 kg/m³) - Altitude: 760m</option>
+                <option value="1.138" selected>Morumbi (1.138 kg/m³) - Altitude: 760m</option>
                 <option value="0.852">Hernando Siles (0.852 kg/m³) - Altitude: 3.637m</option>
                 <option value="0.788">Daniel Alcides Carrión (0.788 kg/m³) - Altitude: 4.380m</option>
             </select>
         </label>
 
-        <label>Velocidade Inicial (m/s): <span id="velocidadeLabel">10</span>
-        <input type="range" id="velocidade"  class="slider" min="1" max="35" value="30" step="1">
+        <label>Velocidade Inicial (m/s): <span id="velocidadeLabel">30</span>
+            <input type="range" id="velocidade" class="slider" min="1" max="35" value="30" step="1">
         </label>
 
         <label>Ângulo (°): <span id="anguloLabel">45</span>
-        <input type="range" id="angulo"   class="slider" min="10" max="90" value="45" step="1">
+            <input type="range" id="angulo" class="slider" min="10" max="90" value="45" step="1">
         </label>
 
-        <label>Posição Inicial X: <span id="posicaoXLabel"></span>
-        <input type="range" id="posicaoX"   class="slider" min="0" max="25" value="5" step="1">
+        <label>Posição Inicial X: <span id="posicaoXLabel">5</span>
+            <input type="range" id="posicaoX" class="slider" min="0" max="25" value="5" step="1">
         </label>
 
-        <button class="botao"  id="iniciar">Iniciar Simulação</button>
-        <button class="botao"  id="limpar">Limpar Trajetórias</button>
+        <button class="botao" id="iniciar">Iniciar Simulação</button>
+        <button class="botao" id="limpar">Limpar Trajetórias</button>
         <p id="distanciaPercorrida">Distância Percorrida: <span id="distancia">0</span> metros</p>
     </div>
 
-
-
-    <canvas id="trajetoriaCanvas"> </canvas>
+    <canvas id="trajetoriaCanvas"></canvas>
 
     <script src="script.js"></script>
 </body>

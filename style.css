@@ -56,23 +56,6 @@ canvas {
     padding-right: 20px;
 }
 
-@media (max-width: 1600px) {
-    .controls {
-        width: 250px;
-        padding: 40px 15px; 
-        gap: 15px;
-        top: 80px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .controls {
-        width: 220px; 
-        padding: 30px 10px;
-        gap: 10px;
-        top: 60px;
-    }
-}
 
 label{
     font-weight: bold;
@@ -118,7 +101,6 @@ label{
     margin-top: 5px;
 }
 
-/* CSS */
 .botao {
   appearance: none;
   background-color: #2ea44f;
@@ -143,6 +125,8 @@ label{
   vertical-align: middle;
   white-space: nowrap;
 }
+
+
 
 .botao:focus:not(:focus-visible):not(.focus-visible) {
   box-shadow: none;
@@ -181,4 +165,46 @@ label {
 label span {
     display: block;
     margin-bottom: 10px; 
+}
+
+
+
+@media (max-width: 1600px) {
+    .controls {
+        width: 250px;
+        height: 470px;
+        padding: 20px 15px; 
+        gap: 15px;
+        top: 5px;
+    }
+    .slider {
+        height: 10px;
+    }
+    .slider::-webkit-slider-thumb {
+        height: 15px;
+        width: 15px;
+      }
+      
+      .slider::-moz-range-thumb {
+        height: 15px;
+        width: 15px;
+      }
+    canvas {
+        height: 83vh;
+    }
+
+    .botao {
+        padding: 3px 10px;
+
+    }
+
+    
+    label{
+        font-size: 12px;
+    }
+
+    p {
+        font-size: 15px;
+    }
+    
 }
