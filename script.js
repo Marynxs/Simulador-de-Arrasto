@@ -1,7 +1,7 @@
 const canvas = document.getElementById('trajetoriaCanvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d'); 
 
-const g = 9.8; // Gravidade em m/s²
+const g = 9.8; // gravidade
 
 const personagemImg = new Image();
 personagemImg.src = './Assets/Personagem.png';
@@ -9,51 +9,56 @@ personagemImg.src = './Assets/Personagem.png';
 const bolaImg = new Image();
 bolaImg.src = './Assets/Bola.png';
 
-// Original dimensions of the character and ball
+const fundoImg = new Image();
+fundoImg.src = './Assets/Campo.jpg'; // Caminho da imagem de fundo
+
+// Tamanho original dos personagens e bola
 const larguraPersonagemOriginal = 89;
 const alturaPersonagemOriginal = 117;
 const larguraBolaOriginal = 27;
 const alturaBolaOriginal = 27;
 
-// Scaling factor to adjust sizes based on screen width
-let escala = 38; // Base scale (adjust as needed)
+// Valores que serão reajustados pela escala
+let escala = 38;
 let larguraPersonagem = larguraPersonagemOriginal;
 let alturaPersonagem = alturaPersonagemOriginal;
 let larguraBola = larguraBolaOriginal;
 let alturaBola = alturaBolaOriginal;
 
-// Function to adjust scaling based on window size
-function ajustarEscala() {
-    const baseWidth = 1920; // Base screen width
-    escala = (window.innerWidth / baseWidth) * 38; // Adjust escala proportionally
+// Ponto Y base original para o personagem e a bola
+const yPosicaoBaseOriginal = 200; // Ajuste esse valor conforme necessário
+let yPosicaoBase = yPosicaoBaseOriginal; // Será reajustado pela escala
 
-    // Adjust the character and ball sizes
-    const scaleFactor = escala / 38;
-    larguraPersonagem = larguraPersonagemOriginal * scaleFactor;
-    alturaPersonagem = alturaPersonagemOriginal * scaleFactor;
-    larguraBola = larguraBolaOriginal * scaleFactor;
-    alturaBola = alturaBolaOriginal * scaleFactor;
+// Função para ajustar a escala dos objetos de acordo com o tamanho da tela
+function ajustarEscala() {
+    const baseWidth = 1920;
+    const baseHeight = 1080;
+    escala = (window.innerWidth / baseWidth) * 38;
+
+    let scale = escala / 38;
+    larguraPersonagem = larguraPersonagemOriginal * scale;
+    alturaPersonagem = alturaPersonagemOriginal * scale;
+    larguraBola = larguraBolaOriginal * scale;
+    alturaBola = alturaBolaOriginal * scale;
+
+    yPosicaoBase = yPosicaoBaseOriginal * (canvas.height / baseHeight);
 }
 
-// Call this function when the window is resized
 window.addEventListener('resize', () => {
-    ajustarEscala();
     ajustarCanvas();
+    ajustarEscala();
     desenharCenaInicial();
-    ajustarPosicaoXSlider();
 });
 
-// Function to adjust the canvas size
+// Função para ajustar o tamanho do canvas
 function ajustarCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-
-
-// Adjust escala and canvas size initially
-ajustarEscala();
 ajustarCanvas();
+ajustarEscala();
+
 
 // Elementos de controle
 const estadioSelect = document.getElementById('estadioSelect');
@@ -66,12 +71,11 @@ const anguloLabel = document.getElementById('anguloLabel');
 const posicaoXLabel = document.getElementById('posicaoXLabel');
 const distanciaDisplay = document.getElementById('distancia');
 
-let densidadeDoAr = parseFloat(estadioSelect.value); // Densidade do ar em kg/m³
+let densidadeDoAr = parseFloat(estadioSelect.value);
 
-// Lista de trajetórias e cores para cada simulação anterior
+// Array de trajetórias e cores para cada simulação anterior
 let trajetoriasPassadas = [];
 
-// Cores disponíveis para trajetórias
 const cores = ['#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#FFAF33', '#9D33FF', '#33FFF3', '#FF3333', '#33FF92', '#FF8333'];
 
 // Função para escolher uma cor aleatória para a trajetória
@@ -88,9 +92,13 @@ function atualizarLabels() {
 
 function desenharCenaInicial() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+
+    // Desenha o fundo escalado
+    ctx.drawImage(fundoImg, 0, 0, canvas.width, canvas.height);
+
     const posXInicial = parseFloat(posicaoXInput.value) * escala;
-    const yBasePersonagem = canvas.height - alturaPersonagem; // Posição Y do personagem no chão
-    const yBaseBola = canvas.height - alturaBola; // Posição Y da bola no chão
+    const yBasePersonagem = canvas.height - yPosicaoBase - alturaPersonagem;
+    const yBaseBola = canvas.height - yPosicaoBase - alturaBola;
 
     // Desenha o personagem
     ctx.drawImage(personagemImg, posXInicial, yBasePersonagem, larguraPersonagem, alturaPersonagem);
@@ -103,25 +111,25 @@ function desenharCenaInicial() {
         ctx.beginPath();
         ctx.strokeStyle = cor;
         ctx.lineWidth = 2;
-        ctx.moveTo(trajetoria[0].x * escala + posicaoInicial, canvas.height - trajetoria[0].y * escala - alturaBola / 2);
+        ctx.moveTo(trajetoria[0].x * escala + posicaoInicial, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
         trajetoria.forEach(point => {
-            ctx.lineTo(point.x * escala + posicaoInicial, canvas.height - point.y * escala - alturaBola / 2);
+            ctx.lineTo(point.x * escala + posicaoInicial, canvas.height - yPosicaoBase - point.y * escala - alturaBola / 2);
         });
         ctx.stroke();
 
         // Desenha a bola no final de cada trajetória
         const { x, y } = trajetoria[trajetoria.length - 1];
-        ctx.drawImage(bolaImg, x * escala + posicaoInicial - larguraBola / 2, canvas.height - y * escala - alturaBola, larguraBola, alturaBola);
+        ctx.drawImage(bolaImg, x * escala + posicaoInicial - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
     });
 
-    // Desenhar a linha de direção
+    // Desenha a linha de direção
     const anguloRad = parseFloat(anguloInput.value) * Math.PI / 180;
     const velocidadeInicial = parseFloat(velocidadeInput.value);
     
     const velX = velocidadeInicial * Math.cos(anguloRad);
     const velY = velocidadeInicial * Math.sin(anguloRad);
     
-    const t = 0.1; // Tempo em segundos
+    const t = 0.1;
     
     const posXFinal = posXInicial + larguraPersonagem + velX * t * escala;
     const posYFinal = (yBaseBola + alturaBola / 2) - (velY * t - 0.5 * g * t * t) * escala;
@@ -134,9 +142,9 @@ function desenharCenaInicial() {
     ctx.stroke();
 }
 
-// Função para calcular a trajetória e retornar as posições para a animação
+// Função para calcular a trajetória
 function calcularTrajetoria() {
-    const trajetoria = []; // Array para armazenar a trajetória
+    const trajetoria = [];
 
     let vInicial = parseFloat(velocidadeInput.value);
     let angulo = parseFloat(anguloInput.value) * Math.PI / 180;
@@ -172,7 +180,7 @@ function calcularTrajetoria() {
     return trajetoria;
 }
 
-// Função para animar uma nova bola ao longo da trajetória
+// Função para animar a bola ao longo da trajetória
 function animarBola(trajetoria) {
     let index = 0;
     const posXInicial = parseFloat(posicaoXInput.value) * escala;
@@ -187,21 +195,20 @@ function animarBola(trajetoria) {
             ctx.beginPath();
             ctx.strokeStyle = corTrajetoria;
             ctx.lineWidth = 2;
-            ctx.moveTo(trajetoria[0].x * escala + posXInicial, canvas.height - trajetoria[0].y * escala - alturaBola / 2);
+            ctx.moveTo(trajetoria[0].x * escala + posXInicial, canvas.height - yPosicaoBase - trajetoria[0].y * escala - alturaBola / 2);
             for (let i = 1; i <= index; i++) {
-                ctx.lineTo(trajetoria[i].x * escala + posXInicial, canvas.height - trajetoria[i].y * escala - alturaBola / 2);
+                ctx.lineTo(trajetoria[i].x * escala + posXInicial, canvas.height - yPosicaoBase - trajetoria[i].y * escala - alturaBola / 2);
             }
             ctx.stroke();
 
             // Pega a posição da bola na trajetória
             const { x, y } = trajetoria[index];
-            ctx.drawImage(bolaImg, x * escala + posXInicial - larguraBola / 2, canvas.height - y * escala - alturaBola, larguraBola, alturaBola);
+            ctx.drawImage(bolaImg, x * escala + posXInicial - larguraBola / 2, canvas.height - yPosicaoBase - y * escala - alturaBola, larguraBola, alturaBola);
             distanciaFinal = x;
 
             index++;
             requestAnimationFrame(frame);
         } else {
-            // Salva a trajetória e posição inicial da bola quando a animação termina
             trajetoriasPassadas.push({ trajetoria, cor: corTrajetoria, posicaoInicial: posXInicial });
             distanciaDisplay.textContent = (distanciaFinal - larguraPersonagem / escala).toFixed(2);
         }
@@ -225,7 +232,7 @@ limparBtn.addEventListener('click', () => {
     distanciaDisplay.textContent = '0';
 });
 
-// Atualiza as labels quando os sliders mudam
+// Atualiza tudo quando os sliders mudam
 velocidadeInput.addEventListener('input', () => {
     atualizarLabels();
     desenharCenaInicial();
@@ -243,27 +250,28 @@ posicaoXInput.addEventListener('input', () => {
 
 estadioSelect.addEventListener('change', (event) => {
     densidadeDoAr = parseFloat(event.target.value);
-    console.log(`Densidade do ar atualizada para: ${densidadeDoAr} kg/m³`);
     desenharCenaInicial();
 });
 
-// Draw the scene once both images are loaded
+// Carregamento das imagens
 let imagesLoaded = 0;
 personagemImg.onload = () => {
     imagesLoaded++;
-    if (imagesLoaded === 2) {
+    if (imagesLoaded === 3) {
         desenharCenaInicial();
-        ajustarPosicaoXSlider();
     }
 };
 bolaImg.onload = () => {
     imagesLoaded++;
-    if (imagesLoaded === 2) {
+    if (imagesLoaded === 3) {
         desenharCenaInicial();
-        ajustarPosicaoXSlider();
+    }
+};
+fundoImg.onload = () => {
+    imagesLoaded++;
+    if (imagesLoaded === 3) {
+        desenharCenaInicial();
     }
 };
 
-// Configura valores iniciais
 atualizarLabels();
-ajustarPosicaoXSlider();

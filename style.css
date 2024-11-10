@@ -5,25 +5,16 @@
 }
 
 html, body {
+    overflow: hidden;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-}
-
-body {
-    background-image: url('./Assets/Campo.jpg'); 
-    background-size: cover; /* Cobre toda a tela */
-    background-position: center; 
-    background-repeat: no-repeat;
-    background-attachment: fixed; /* Mantém a imagem fixa ao rolar */
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     margin: 0;
     padding: 0;
-    height: 100vh; /* Define altura total da viewport */
-    overflow: hidden; /* Remove rolagem para evitar cortes */
+}
+
+/* Estilos do body */
+body {
+    font-family: Arial, sans-serif;
 }
 
 h1 {
@@ -36,13 +27,13 @@ canvas {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 87vh;
+    height: 100%;
     z-index: -1;
 }
 
 .controls {
     position: absolute;
-    top: 100px;
+    top: 10px;
     left: 0;
     display: flex;
     flex-direction: column;
@@ -54,6 +45,7 @@ canvas {
     padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
+    z-index: 1
 }
 
 
@@ -189,9 +181,6 @@ label span {
         height: 15px;
         width: 15px;
       }
-    canvas {
-        height: 83vh;
-    }
 
     .botao {
         padding: 3px 10px;
