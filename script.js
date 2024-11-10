@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 
 const g = 9.8; // gravidade
 
+//Imagens:
 const personagemImg = new Image();
 personagemImg.src = './Assets/Personagem.png';
 
@@ -10,7 +11,7 @@ const bolaImg = new Image();
 bolaImg.src = './Assets/Bola.png';
 
 const fundoImg = new Image();
-fundoImg.src = './Assets/Campo.jpg'; // Caminho da imagem de fundo
+fundoImg.src = './Assets/Campo.jpg';
 
 // Tamanho original dos personagens e bola
 const larguraPersonagemOriginal = 89;
@@ -26,8 +27,8 @@ let larguraBola = larguraBolaOriginal;
 let alturaBola = alturaBolaOriginal;
 
 // Ponto Y base original para o personagem e a bola
-const yPosicaoBaseOriginal = 200; // Ajuste esse valor conforme necessário
-let yPosicaoBase = yPosicaoBaseOriginal; // Será reajustado pela escala
+const yPosicaoBaseOriginal = 200; 
+let yPosicaoBase = yPosicaoBaseOriginal; //posição que sera reajustada
 
 // Função para ajustar a escala dos objetos de acordo com o tamanho da tela
 function ajustarEscala() {
@@ -92,9 +93,8 @@ function atualizarLabels() {
 }
 
 function desenharCenaInicial() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Desenha o fundo escalado
     ctx.drawImage(fundoImg, 0, 0, canvas.width, canvas.height);
 
     const posicaoInicialEmMetros = parseFloat(posicaoXInput.value);
@@ -111,7 +111,7 @@ function desenharCenaInicial() {
 
     // Desenha todas as trajetórias passadas
     trajetoriasPassadas.forEach(({ trajetoria, cor, posicaoInicial }) => {
-        const posXInicialCanvasTrajetoria = posicaoInicial * escala; // Converter para canvas
+        const posXInicialCanvasTrajetoria = posicaoInicial * escala; // Redesenha a trajetoria para tamanhos diferentes de tela
 
         ctx.beginPath();
         ctx.strokeStyle = cor;
@@ -227,7 +227,7 @@ function animarBola(trajetoria) {
 const iniciarBtn = document.getElementById('iniciar');
 iniciarBtn.addEventListener('click', () => {
     const trajetoria = calcularTrajetoria();
-    animarBola(trajetoria); // Anima a bola ao longo da trajetória
+    animarBola(trajetoria);
 });
 
 // Botão para limpar todas as trajetórias
@@ -254,12 +254,13 @@ posicaoXInput.addEventListener('input', () => {
     desenharCenaInicial();
 });
 
+// Atualiza a densidade do ar de acordo com o estadio escolhido
 estadioSelect.addEventListener('change', (event) => {
     densidadeDoAr = parseFloat(event.target.value);
     desenharCenaInicial();
 });
 
-// Carregamento das imagens
+// Carrega todas as imagens antes de aparecer na tela
 let imagesLoaded = 0;
 personagemImg.onload = () => {
     imagesLoaded++;
