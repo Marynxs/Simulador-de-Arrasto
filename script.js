@@ -252,8 +252,8 @@ function animarBola(trajetoria) {
     let distanciaFinal = 0;
 
     // Converter posições do gol para metros
-    const golPosicaoXMetros = golPosicaoX / escalaX;
-    const golLarguraMetros = larguraGol / escalaX;
+    const golPosicaoXMetros = (golPosicaoX / escalaX) - 100/escalaX;
+    const golLarguraMetros = larguraGol / escalaX + 100/escalaX;
     const golXMin = golPosicaoXMetros;
     const golXMax = golPosicaoXMetros + golLarguraMetros;
 
@@ -306,7 +306,6 @@ function animarBola(trajetoria) {
             const posXBolaMetros = x + posicaoInicialEmMetros;
 
             if (posXBolaMetros < golXMin) {
-                // Bola está antes do gol - desenhar bola após o gol (bola na frente)
 
                 // Desenha a parte da frente do gol
                 ctx.drawImage(GolFrente, golPosicaoX, golPosicaoY, larguraGol, alturaGol);
@@ -314,7 +313,6 @@ function animarBola(trajetoria) {
                 // Desenha a bola
                 ctx.drawImage(bolaImg, xCanvas, yCanvas, larguraBola, alturaBola);
             } else {
-                // Bola está dentro ou depois do gol - desenhar bola antes do gol (bola atrás)
 
                 // Desenha a bola
                 ctx.drawImage(bolaImg, xCanvas, yCanvas, larguraBola, alturaBola);
@@ -338,11 +336,11 @@ function animarBola(trajetoria) {
                 mostrarGool = true;
                 setTimeout(() => {
                     mostrarGool = false;
-                    desenharCenaInicial(); // Atualizar a tela após ocultar a imagem
-                }, 2000); // 2000 milissegundos = 2 segundos
+                    desenharCenaInicial();
+                }, 2000);
             }
 
-            desenharCenaInicial(); // Redesenha a cena final
+            desenharCenaInicial();
         }
     }
 
