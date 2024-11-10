@@ -49,11 +49,7 @@ function ajustarCanvas() {
     canvas.height = window.innerHeight;
 }
 
-// // Function to adjust the maximum value of the Position X slider
-// function ajustarPosicaoXSlider() {
-//     const maxPosX = (canvas.width - larguraPersonagem) / escala;
-//     posicaoXInput.max = Math.floor(maxPosX);
-// }
+
 
 // Adjust escala and canvas size initially
 ajustarEscala();
