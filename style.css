@@ -148,8 +148,8 @@ label{
 
 label {
     display: flex;
-    flex-direction: column; /* Organiza texto e slider na vertical */
-    align-items: center; /* Centraliza o texto e o controle */
+    flex-direction: column;
+    align-items: center;
     padding-bottom: 10px;
     font-size: 14px;
 }
